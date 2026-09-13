@@ -1,6 +1,6 @@
 # Inlane Semantic Layer
 
-A documentation layer for Inlane's `cratio_crm` Postgres database, built so Claude (and anyone else) stops guessing which tables/columns map to which business metric when generating reports through Metabase.
+A documentation layer for Inlane's database, built so Claude (and anyone else) stops guessing which tables/columns map to which business metric when generating reports through Metabase.
 
 ## Why this exists
 
