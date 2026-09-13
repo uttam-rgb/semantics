@@ -1,0 +1,14 @@
+{
+  "name": "inlane-semantics-marketplace",
+  "owner": {
+    "name": "Uttam",
+    "url": "https://github.com/uttam-rgb"
+  },
+  "plugins": [
+    {
+      "name": "inlane-semantics",
+      "source": "./",
+      "description": "Grounding for Claude when working with Inlane's cratio_crm Postgres database: table docs, verified metric formulas, schema-authority rulings, and known data-quality bugs."
+    }
+  ]
+}
