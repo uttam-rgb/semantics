@@ -6,3 +6,4 @@ scripts/*_output.txt
 scripts/*_sample.json
 __pycache__/
 *.pyc
+build/
