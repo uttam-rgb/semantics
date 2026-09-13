@@ -1,0 +1,12 @@
+{
+  "name": "inlane-semantics",
+  "displayName": "Inlane Data Semantic Layer",
+  "version": "1.0.0",
+  "description": "Grounding for Claude when working with Inlane's cratio_crm Postgres database: table docs, verified metric formulas, schema-authority rulings, and known data-quality bugs. Prevents guessing which table/column/definition is correct.",
+  "author": {
+    "name": "Uttam"
+  },
+  "homepage": "https://github.com/uttam-rgb/semantics",
+  "repository": "https://github.com/uttam-rgb/semantics",
+  "keywords": ["inlane", "postgres", "metabase", "data-dictionary", "semantic-layer"]
+}
