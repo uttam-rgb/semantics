@@ -31,15 +31,6 @@ scripts/                       # Python/psycopg2 scripts used to introspect the 
 
 **Every metric doc** has a YAML front-matter block (`status: confirmed|draft|deprecated`, `source`, `dimensions`, `confirmed_by`) followed by a `verified_sql` section — a tested query to use as a template, not just a description of the logic.
 
-## Ground truth, not guesswork
-
-Nothing here is asserted from schema shape alone. Every table finding and every metric formula was checked against the live database (row counts, freshness, ID overlaps, actual value distributions) and, where possible, against two independent real sources:
-
-1. **Production Metabase SQL** (`SQL_Logic/*.sql`) — the queries actually driving Inlane's dashboards today.
-2. **`Lane_Metric_Definitions_v1.xlsx`** (`reference/`) — the Analytics team's own semantic spec for the same dashboards.
-
-Where those two disagreed with each other, or with what the schema itself implied, the conflict is documented and adjudicated explicitly rather than silently resolved — see `open_questions.md` and the "Adjudicated" notes inside individual metric docs. A few real production bugs were found this way (e.g. an "overdue followups" alert that didn't actually filter for overdue-ness) and are flagged, not quietly fixed.
-
 ## Key findings if you're new here
 
 - **`public` and `analytics` are not a "core vs. reporting" split.** For most shared tables, `public` is a fork frozen around March 2026; `analytics` has everything `public` has plus everything since. Two tables (`Admin`, `admin_permissions`) don't follow this pattern at all — see `schema_map.md`.
