@@ -49,20 +49,18 @@ claude --plugin-dir /path/to/this/repo
 ```
 Then run `/help` to confirm the skill is listed, and `/reload-plugins` to pick up edits without restarting.
 
-**This plugin/marketplace mechanism only works inside Claude Code.** It does not reach a claude.ai Project running in a browser tab — that's a separate system with no plugin bridge between them. If that's your setup, see the next section for two claude.ai-native options instead.
+This only works inside Claude Code, not a claude.ai Project. For claude.ai, see the next section.
 
 ## Alternative: wiring into a claude.ai Project
 
-This is how Inlane's revenue team is actually using this today, via a claude.ai Project with Metabase's native MCP connector. There are two ways to get the grounding into that Project — pick one, they're not meant to be combined:
+For a claude.ai Project with Metabase's native MCP connector attached. Pick one option, don't combine them:
 
-**Option A: upload as a custom Skill (closer to how the plugin works, but per-user).** See [`CLAUDE_AI_SKILL_SETUP.md`](CLAUDE_AI_SKILL_SETUP.md) — download [`inlane-data-guide.zip`](inlane-data-guide.zip) from this repo and upload it via claude.ai **Settings → Features → Skills**. Requires a plan with code execution enabled. Each teammate uploads it individually (claude.ai custom Skills aren't org-deployable), and each of them has to re-download and re-upload it whenever the docs change — there's no auto-sync from this repo.
+**Option A: upload as a custom Skill.** See [`CLAUDE_AI_SKILL_SETUP.md`](CLAUDE_AI_SKILL_SETUP.md). Requires a plan with code execution enabled.
 
-**Option B: paste into Project Knowledge/custom instructions (no plan requirements, but more manual).** Two steps, done once, by whoever has access to that Project:
+**Option B: paste into Project Knowledge/custom instructions.**
 
 1. **Custom instructions.** Open [`_index.md`](_index.md) and paste its full contents into the Project's custom instructions field.
-2. **Project Knowledge.** Upload the files listed in [`PROJECT_KNOWLEDGE_UPLOAD_LIST.md`](PROJECT_KNOWLEDGE_UPLOAD_LIST.md) — every file under `tables/` and `metrics/`, plus `conventions.md`, `schema_map.md`, and `open_questions.md`. That same file lists what **not** to upload (`config.yaml`, `scripts/`, and the raw `SQL_Logic/*.sql` files — the corrected versions live in `metrics/*.md`).
-
-Sharing the GitHub link alone doesn't do any of this for you — someone still has to complete Option A or B once in their own Project. If you just paste the link into a claude.ai chat, Claude can fetch and read this repo's files (including grabbing the zip for you, per `CLAUDE_AI_SKILL_SETUP.md`), but the actual Skill upload in Settings is a manual step only the account owner can do.
+2. **Project Knowledge.** Upload the files listed in [`PROJECT_KNOWLEDGE_UPLOAD_LIST.md`](PROJECT_KNOWLEDGE_UPLOAD_LIST.md).
 
 ## What's Inside
 
