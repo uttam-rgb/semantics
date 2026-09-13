@@ -49,16 +49,18 @@ claude --plugin-dir /path/to/this/repo
 ```
 Then run `/help` to confirm the skill is listed, and `/reload-plugins` to pick up edits without restarting.
 
-**This only works inside Claude Code.** It does not reach a claude.ai Project running in a browser tab — that's a separate system with no plugin bridge between them. If that's your setup, see the next section instead.
+This only works inside Claude Code, not a claude.ai Project. For claude.ai, see the next section.
 
 ## Alternative: wiring into a claude.ai Project
 
-This is how Inlane's revenue team is actually using this today, via a claude.ai Project with Metabase's native MCP connector. Two manual steps, done once, by whoever has access to that Project:
+For a claude.ai Project with Metabase's native MCP connector attached. Pick one option, don't combine them:
+
+**Option A: upload as a custom Skill.** See [`CLAUDE_AI_SKILL_SETUP.md`](CLAUDE_AI_SKILL_SETUP.md). Requires a plan with code execution enabled.
+
+**Option B: paste into Project Knowledge/custom instructions.**
 
 1. **Custom instructions.** Open [`_index.md`](_index.md) and paste its full contents into the Project's custom instructions field.
-2. **Project Knowledge.** Upload the files listed in [`PROJECT_KNOWLEDGE_UPLOAD_LIST.md`](PROJECT_KNOWLEDGE_UPLOAD_LIST.md) — every file under `tables/` and `metrics/`, plus `conventions.md`, `schema_map.md`, and `open_questions.md`. That same file lists what **not** to upload (`config.yaml`, `scripts/`, and the raw `SQL_Logic/*.sql` files — the corrected versions live in `metrics/*.md`).
-
-Sharing the GitHub link alone doesn't do either of these steps for you — someone still has to do them once in their own Project.
+2. **Project Knowledge.** Upload the files listed in [`PROJECT_KNOWLEDGE_UPLOAD_LIST.md`](PROJECT_KNOWLEDGE_UPLOAD_LIST.md).
 
 ## What's Inside
 
@@ -69,12 +71,14 @@ Sharing the GitHub link alone doesn't do either of these steps for you — someo
 skills/
   inlane-data-guide/SKILL.md  # the skill that auto-triggers in Claude Code
 
-_index.md                    # for the claude.ai Project path: goes into custom instructions
+_index.md                    # for the claude.ai Project path (Option B): goes into custom instructions
 conventions.md                # cross-cutting rules: stale-number handling, naming, known-bad fields
 schema_map.md                 # which schema/table is authoritative when public/analytics duplicate each other
 open_questions.md             # ~50 items discovered during documentation that still need a human answer
 future_work.md                # what's left to document, and why it was deprioritized
-PROJECT_KNOWLEDGE_UPLOAD_LIST.md  # exactly what to upload where for the claude.ai Project path
+PROJECT_KNOWLEDGE_UPLOAD_LIST.md  # exactly what to upload where for the claude.ai Project path (Option B)
+inlane-data-guide.zip          # claude.ai custom-Skill upload (Option A) — see CLAUDE_AI_SKILL_SETUP.md
+CLAUDE_AI_SKILL_SETUP.md       # how to install/update the Skill zip above
 
 tables/
   exotel/                     # 2 tables
@@ -84,7 +88,8 @@ metrics/                       # 16 business-metric docs
 
 SQL_Logic/                     # production Metabase SQL, used as ground truth for the metrics above
 reference/                     # Lane_Metric_Definitions_v1.xlsx — the Analytics team's own metric spec
-scripts/                       # Python/psycopg2 scripts used to introspect the schema (read-only)
+scripts/                       # Python/psycopg2 scripts used to introspect the schema (read-only);
+                                # build_claude_ai_skill.py regenerates inlane-data-guide.zip
 ```
 
 **Every table doc** follows the same shape: Status (live/stale/dead/superseded), Purpose, Grain, Columns, Relationships, Gotchas, Owner, Last verified.
