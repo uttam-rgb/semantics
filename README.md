@@ -1,6 +1,6 @@
 # Inlane Semantic Layer
 
-A documentation layer for Inlane's `cratio_crm` Postgres database, built so Claude (and anyone else) stops guessing which tables/columns map to which business metric when generating reports through Metabase.
+A documentation layer for Inlane's database, built so Claude (and anyone else) stops guessing which tables/columns map to which business metric when generating reports through Metabase.
 
 ## Table of Contents
 
@@ -15,24 +15,7 @@ A documentation layer for Inlane's `cratio_crm` Postgres database, built so Clau
 
 ## Why this exists
 
-Inlane is moving towards self-serve reporting — letting the team connect Claude to Metabase and build their own reports and metrics on demand, instead of routing every request through a data/analytics person. That only works if Claude has real grounding: which of several similarly-named tables is authoritative, which `lead_stage` values actually count as "converted," which date field a metric should filter on, and that a column like `call_did_status` looks trustworthy but isn't. An early attempt without that grounding produced wrong numbers — not because Claude can't write SQL, but because nothing told it which SQL was right. This repo is that grounding.
-
-## How it works
-
-Every table and every metric in this database gets one short, self-contained doc — never inferred from a name or a hunch. A table doc says what it actually holds, what one row means, and what will trip you up. A metric doc says the exact formula and carries a query that's already been run against real data, not just described.
-
-Nothing here is asserted from schema shape alone. Every finding was checked against the live database (row counts, freshness, ID overlaps, actual value distributions) and, where possible, against two independent real sources of truth: Inlane's actual production Metabase SQL, and the Analytics team's own metric-definitions spreadsheet. Where those two disagreed with each other — or with what the schema itself implied — the conflict is written down and resolved explicitly, not smoothed over. A few real production bugs were caught this way and are flagged, not quietly patched.
-
-Not everything gets an answer. Roughly 50 open questions are logged as genuinely unresolved — ambiguous status vocabularies, schema pairs nobody's confirmed the authority of, metrics that can't be built with the data that exists today. The rule throughout: **if it isn't confirmed, say so — don't guess.**
-
-## Getting Started
-
-This repo isn't a plugin — there's no install command that wires it up automatically. Whoever's using it with Claude needs to do two manual steps once, in their own Claude Project:
-
-1. **Custom instructions.** Open [`_index.md`](_index.md) and paste its full contents into the Project's custom instructions field. This is the part that's always loaded, every conversation — the hard rules (which schema to trust, which fields never to use, what "agent" means) live here so they're never missed.
-2. **Project Knowledge.** Upload the files listed in [`PROJECT_KNOWLEDGE_UPLOAD_LIST.md`](PROJECT_KNOWLEDGE_UPLOAD_LIST.md) — every file under `tables/` and `metrics/`, plus `conventions.md`, `schema_map.md`, and `open_questions.md`. That same file also lists what **not** to upload (`config.yaml`, anything in `scripts/`, and the raw `SQL_Logic/*.sql` files — some contain known bugs; the corrected versions live in `metrics/*.md`).
-
-That's it — no build step, no server, no dependencies. The Metabase MCP connector (or whichever query tool the Project uses) stays the execution layer; this repo just tells Claude *which* query to build before it calls those tools.
+Inlane is moving towards self-serve reporting — letting the team connect Claude to Metabase and build their own reports and metrics on demand, instead of routing every request through a data/analytics person. That only works if Claude has real grounding... An early attempt without that grounding produced wrong numbers... This repo is that grounding.
 
 **If you're sharing this repo with someone else**, point them at this section first. The link alone doesn't do anything — someone still has to do these two steps in their own Project.
 
