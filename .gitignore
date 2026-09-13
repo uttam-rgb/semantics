@@ -1,0 +1,8 @@
+config.yaml
+schema_dump.json
+scripts/*_dump.json
+scripts/*_triage.json
+scripts/*_output.txt
+scripts/*_sample.json
+__pycache__/
+*.pyc

@@ -1,0 +1,29 @@
+# Inlane data semantic layer — read this before writing any SQL
+
+This Project has documentation files (uploaded as Project Knowledge) describing Inlane's `cratio_crm` Postgres database — table meanings, column gotchas, and known data-quality issues. **Before generating a query through the Metabase MCP tools, check the relevant docs below.** If something is ambiguous and not resolved in these docs, say so and ask, rather than guessing.
+
+## Hard rules (always apply, no exceptions)
+
+1. **Never query the `analytics_staging` schema.** It's a working/test copy, explicitly out of scope.
+2. **`exotel.call_logs` and `exotel.sync_history` are dead (0 real rows).** Use `public.exotel_calls` / `public.exotel_sync_history` instead.
+3. **For `Schedule`, `payment`, `Learner`, `enrollment`, `reschedule_requests`, `schedule_preferences`, `Serviceable_Areas`, and `team_bug_reports`: use the `analytics.*` version, not `public.*`.** `public`'s data is frozen ~March 2026 (6+ months stale); `analytics` has everything `public` has plus everything since. Full detail and the two exceptions that *don't* follow this rule (`admin_permissions`, `Admin`) are in `schema_map.md`.
+4. **`analytics.cratio_leads_analytics` is the real leads table**, not the tiny `public.cratio_leads`.
+5. **`analytics.User` and `analytics.users` (lowercase) are two unrelated features, not the same table with different casing.** See `tables/analytics/_admin_user_naming_overview.md`.
+6. Any table/column marked "STALE," "SUPERSEDED," "DEAD," or "⚠️ UNRESOLVED" in its doc should not be used for reporting without flagging that status to the user first.
+7. **Every row count/percentage in these docs is a stale snapshot from its "Last verified" date, not a live fact.** Never answer "how many X" from a number written in a doc — always query the live table. See `conventions.md` for what these numbers are for instead.
+8. **"Agent" = `lead_owner`.** Any question about "agent performance," "by agent," or "which agent" means grouping an existing metric by `lead_owner` — it is never a separate table or concept. Don't treat an "X - Agent" metric name as requiring new logic; check whether the base metric already supports this dimension first (most do). See `conventions.md`.
+9. **`analytics.cratio_leads_analytics.call_did_status` must never be used in any metric logic** — confirmed unreliable (almost entirely disjoint from real telephony call data). Use `public.exotel_calls` for all call-activity logic instead. See `conventions.md`.
+
+## Where to look
+
+- **`conventions.md`** — cross-cutting rules, including why numbers in these docs must never be treated as current data (read this one first).
+- **`schema_map.md`** — which schema/table is authoritative when duplicates exist across `public`/`analytics`.
+- **`open_questions.md`** — things discovered during documentation that need a human answer (ambiguous status vocabularies, unconfirmed units, unresolved table relationships). Treat everything listed here as genuinely unresolved — flag it, don't guess a resolution.
+- **`tables/analytics/_reporting_system_overview.md`** — how the lead-alerting/reporting tables (`alerted_leads_log`, `alert_resolution_log`, `alert_metric_snapshots`, `daily_report_snapshots`, `cratio_leads_analytics`, `lead_snapshots`, `lead_owner_target`) fit together. Read this before building any lead/conversion/revenue-by-owner report.
+- **`tables/<schema>/<table>.md`** — one file per table: purpose, grain, column meanings, relationships, and gotchas.
+- **`metrics/<metric>.md`** — one file per business metric, each with a `status` field (`confirmed`/`draft`/`deprecated`) and a `verified_sql` block. **Always use the query in a metric's `verified_sql` as the template — adapt its date range/dimension filters, don't reconstruct the logic from table docs.** Only treat a metric as settled if `status: confirmed`; a `draft` metric means surface the ambiguity to the user instead of picking a definition. Current metrics: `revenue`, `lead_volume`, `conversion_rate`, `call_activity`, `target_attainment`, `alert_resolution`, `instructor_utilization`, `ticket_size`, `source_wise_summary`, `hourly_split`, `agent_lead_status`, `self_reported_agent_calls`, `speed_to_call`, `lead_health_alerts`, `followup_response_time` (all `confirmed`) and `lead_status_buckets` (`draft`, newly constructed rather than extracted from production SQL). Cross-checked 2026-09-12 against `Lane_Metric_Definitions_v1.xlsx` (Inlane's own semantic spec) and a 6th production script (`SQL_Logic/health_metric.sql`) — each still has specific gotchas (cohort mismatches, fixed bugs, unbuildable sub-metrics, deliberately non-reconciled dual definitions) that must be read, not skipped.
+- **`future_work.md`** — tables not yet documented (geospatial demand modeling, e-learning, instructor payouts, a still-unidentified `car_inventory`/`sell_leads` feature, misc ops tables). If a query needs one of these and no doc exists yet, say so explicitly rather than guessing at the schema.
+
+## Coverage as of 2026-09-12
+
+**All 107 tables are documented**: `exotel` (2), `public` (21), `analytics` (84 — `analytics_staging` explicitly excluded, out of scope). Plus 13 metric docs, cross-checked against Inlane's own `Lane_Metric_Definitions_v1.xlsx` spec — 12 `confirmed`, 1 `draft`. A few named metrics from that spreadsheet are explicitly **not buildable** with current data (ad spend by source, self-reported "connected calls," three undefined call metrics) — see `open_questions.md` rather than assume they exist. Two whole subsystems inside `analytics` (a used-car marketplace — "Lane Cars" — and a geospatial demand/supply planning system) are documented but their relevance to this semantic layer is **unconfirmed** — see `future_work.md` before treating either as in-scope for a business question. Remaining open items are tracked in `open_questions.md` (43 items as of this writing).
