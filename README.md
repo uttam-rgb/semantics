@@ -4,7 +4,7 @@ A documentation layer for Inlane's database, built so Claude (and anyone else) s
 
 ## Why this exists
 
-Inlane's revenue team went self-serve on reporting — connecting Claude to Metabase to build reports and metrics on demand. The numbers came out wrong. Not because Claude can't write SQL, but because it had no grounding on which of several similarly-named tables was authoritative, which `lead_stage` values counted as "converted," which date field a metric should filter on, or that a column like `call_did_status` looks trustworthy but isn't. This repo is that grounding.
+Inlane is moving towards self-serve reporting — letting the team connect Claude to Metabase and build their own reports and metrics on demand, instead of routing every request through a data/analytics person. That only works if Claude has real grounding... An early attempt without that grounding produced wrong numbers... This repo is that grounding.
 
 ## What's here
 
