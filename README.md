@@ -90,6 +90,7 @@ SQL_Logic/                     # production Metabase SQL, used as ground truth f
 reference/                     # Lane_Metric_Definitions_v1.xlsx — the Analytics team's own metric spec
 scripts/                       # Python/psycopg2 scripts used to introspect the schema (read-only);
                                 # build_claude_ai_skill.py regenerates inlane-data-guide.zip
+mcp-server/metabase/            # MCP server wrapping analytics-metabase.inlane.in — see its README.md
 ```
 
 **Every table doc** follows the same shape: Status (live/stale/dead/superseded), Purpose, Grain, Columns, Relationships, Gotchas, Owner, Last verified.
